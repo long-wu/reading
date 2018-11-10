@@ -2,7 +2,7 @@ sql语句复习整理
 =======================
 
 
-<br><br>
+<br>
 ## 1、了解SQL
 ### 数据库基础概念
 * 数据库: 数据库是以一个以某种有组织的方式存储的数据集合，换句话说数据库就是保存有组织的数据的容器，类似一个excel文件
@@ -24,7 +24,7 @@ sql语句复习整理
 	注意SQL中不区分大小写，为了方便，后面SQL都一般使用小写，SQL一般要带分号，为了简便一般后面省略分号
 
 
-<br><br>
+<br>
 ## 2、检索数据相关
 ### SELECT
 * 检索单个列: select 列名 from 表名	eg: select name from user	从user表中检索所有的姓名
@@ -69,7 +69,7 @@ sql语句复习整理
 
 
 
-<br><br>
+<br>
 ## 3、过滤数据相关
 ### WHERE基础
 * 基础使用: select name, address from user where age = 21	查询年龄为21岁的用户的name和address
@@ -101,7 +101,7 @@ sql语句复习整理
 * [^charlist] 不在字符列中的任何单一字符  eg: select name from user where name LIKE "[^WZ]%" 通配不以W和Z开头的name(有时候要用!代替^)
 
 
-<br><br>
+<br>
 ## 4、函数相关
 ### SQL函数介绍
 	SQL中提供了一些函数可以进行数据处理，所有函数一般都可以在不同的数据库中使用，但实现可能不同，具体情况具体分析
@@ -153,7 +153,7 @@ sql语句复习整理
 		eg:	select COUNT(*) as num_items, MIN(score_py) as min_score_py, MAX(score_py) as max_score_py from score 
 
 
-<br><br>
+<br>
 ## 5、分组数据
 ### 数据分组介绍	
 	SQL聚集函数可以用来汇总数据	我们可以统计当前表中的用户数 但是如何统计某个权限的用户数 这时候就要使用到分组了
@@ -197,19 +197,19 @@ sql语句复习整理
 		
 
 
-<br><br>
+<br>
 ## 6、数据的插入、更新、删除
 
 
 
 
-<br><br>
+<br>
 ## 7、创建、操作数据库和表
 
 
 
 
-<br><br>
+<br>
 ## 8、视图、存储过程、游标、触发器
 
 
