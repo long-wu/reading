@@ -2,7 +2,8 @@ sql语句复习整理
 =======================
 
 
-## 了解SQL
+<br><br>
+## 1、了解SQL
 ### 数据库基础概念
 * 数据库: 数据库是以一个以某种有组织的方式存储的数据集合，换句话说数据库就是保存有组织的数据的容器，类似一个excel文件
 * 表: 某种特点的数据类型的结构化清单，类似一个excel文件中的一张表
@@ -20,10 +21,11 @@ sql语句复习整理
 ### 关于SQL
 	SQL: SQL是结构化查询语言(Structured Query Language)的缩写，是专门用来与数据库进行通信的语言
 	SQL的优点: 不是一门专有语言，是数据库领域的通用语言；简单易学；看上去简单实际上可以用SQL完成很复杂和高级的数据库操作
-	注意SQL中不区分大小写，为了方便，后面SQL都一般使用小写，SQL一般要带分号，为了简便后面省略分号
+	注意SQL中不区分大小写，为了方便，后面SQL都一般使用小写，SQL一般要带分号，为了简便一般后面省略分号
 
 
-## 检索数据相关
+<br><br>
+## 2、检索数据相关
 ### SELECT
 * 检索单个列: select 列名 from 表名	eg: select name from user	从user表中检索所有的姓名
 * 检索多个列: select 列名1, 列名2, 列名3 from 表名		eg: select name, auth, address from user	从user表中检索所有的姓名、权限、地址
@@ -38,8 +40,37 @@ sql语句复习整理
 * 多个列排序指定排序方向: select name from user order by id DESC, auth	 	 按用户id降序排序用户权限升序排序然后输出name列
 * 多个列排序指定降序排序: select name from user order by id DESC, auth DESC	 按用户id降序排序用户权限降序排序然后输出name列
 
+### 使用子查询
+	什么是子查询: 在查询中嵌套查询
+	两种常见的子查询:
+		select id, auth, address from user where name in (select name from role where role_name='admin');
+		select name, state, (select COUNT(*) from orders where orders.cust_id=customers.cust_id) as orders 
+		from customers order by name;
+	以上是子查询的两种常见用法: where子句中的in用法、填充计算列
 
-## 过滤数据相关
+### 联结表
+	联结表 就是join 是利用SQL的select能执行的最重要的操作
+	数据库将数据分解开存在多张表中是为了更有效的存储数据，更方便的处理操作数据
+	但是数据库将数据存在多张表之后怎么样用单条SQL语句来检索出数据？ 答案是使用join 将多个表join在一起
+					
+	创建联结:
+		select name, address, comment_content from user, comments where user.id = comments.user_id
+		根据用户表的id和comments的user_id字段联结这两张表然后输出用户的name、address、comment_content 
+		使用表别名: select name, address, comment_content from user as u, comments as c where u.id = c.user_id
+	在SQL中也可以一个表联结自己，这种方法被成为自联结
+		子查询: select name, address from user where name = (select name from user where tel LIKE "153%")
+		自联结: select u1.name, u1.address from user as u1, user as u2 where u1.name=u2.name and u2.tel LIKE "153%"
+
+
+### 组合查询
+
+
+### 全文本搜索
+
+
+
+<br><br>
+## 3、过滤数据相关
 ### WHERE基础
 * 基础使用: select name, address from user where age = 21	查询年龄为21岁的用户的name和address
 * WHERE子句后面的条件操作符: =  <>  !=  <  <=  >  >=  !>  !<  BETWEEN	 IS NULL
@@ -70,7 +101,8 @@ sql语句复习整理
 * [^charlist] 不在字符列中的任何单一字符  eg: select name from user where name LIKE "[^WZ]%" 通配不以W和Z开头的name(有时候要用!代替^)
 
 
-## 函数相关
+<br><br>
+## 4、函数相关
 ### SQL函数介绍
 	SQL中提供了一些函数可以进行数据处理，所有函数一般都可以在不同的数据库中使用，但实现可能不同，具体情况具体分析
 	SQL函数用法: SELECT function(列) FROM 表
@@ -121,15 +153,69 @@ sql语句复习整理
 		eg:	select COUNT(*) as num_items, MIN(score_py) as min_score_py, MAX(score_py) as max_score_py from score 
 
 
-## 分组数据
+<br><br>
+## 5、分组数据
 ### 数据分组介绍	
-	SQL聚集函数可以用来汇总数据
+	SQL聚集函数可以用来汇总数据	我们可以统计当前表中的用户数 但是如何统计某个权限的用户数 这时候就要使用到分组了
 	数据分组允许把数据分成多个逻辑组，以便能对某个组进行聚集计算
 
 ### 创建分组
-
+	使用group by子句在select语句中创建分组
+	eg: 
+		select auth, COUNT(*) as num_auth 
+		from user group by auth		
+		按权限分组输出权限以及该权限对应的用户数
+				
+	group by使用注意:
+		group by子句中可以包含任意数目的列
+		在建立分组时，所有列都一起计算(不能从个别的列取回数据)
+		group by子句中出现的列必须是检索列或有效的表达式(但不能是聚集函数!)
+		如果分组列中具有NULL值，则NULL值将作为一个分组返回，如果列中有多个NULL值这多个NULL值将分为一组
 
 ### 过滤分组
-
+	使用having子句来过滤分组 having子句非常类似where子句 having子句和where子句的差别是where子句用来过滤行而having子句用来过滤分组
+	另外having子句中支持where子句中所有的操作符 在下面不再介绍having子句的操作符，关于操作符请看上面的where子句中的操作符相关内容
+				
+	eg:			
+		select auth, count(*) as num_auth form user 
+		group by auth having COUNT(*) >= 2	
+		按权限分组输出有两个以上用户数的权限以及该权限对应的用户数
 
 ### 分组和排序
+	group by 和 order by 经常完成相同的工作，但它们实际上是不同的: 
+			order by					group by
+		排序产生的输出			分组行，但输出可能不是分组的顺序
+		任意列都可以使用			只能用选择列或表达式列而且必须使用每个选择列表达式
+		不一定需要				如果与聚合函数一起使用列(或表达式)，则必须使用！
+		
+	group by输出的结果一般是按分组的顺序(比如上面过滤分组分组的例子)，就是是分组的顺序有时候需要以
+	不同的顺序排序，这时我们可以使用order by子句完成
+	eg:
+		select auth, count(*) as num_auth form user 
+		group by auth having COUNT(*) >= 2 order by num_auth	
+		按权限分组输出有两个以上用户数的权限以及该权限对应的用户数 并按用户数排序输出
+		
+
+
+<br><br>
+## 6、数据的插入、更新、删除
+
+
+
+
+<br><br>
+## 7、创建、操作数据库和表
+
+
+
+
+<br><br>
+## 8、视图、存储过程、游标、触发器
+
+
+
+
+<br><br>
+## 9、事务处理、安全管理、数据库维护、性能改善
+
+
