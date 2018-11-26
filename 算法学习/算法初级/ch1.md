@@ -201,17 +201,117 @@
 		T(N) = 2T(N/2) + O(N) => O(N*logN)		实际情况: 递归之后还要遍历的
 		T(N) = 2T(N/2) + O(N^2) => O(N^2) 		
 
+
 ## 5、复杂排序
 * 归并排序: 时间复杂度: O(N * logN) 额外空间复杂度: O(N)
-* 快速排序:
-* 堆排序:
+* 快速排序: 
+* 堆排序:   
 
 ### 归并排序代码
+	public static void mergeSort(int[] arr) {
+		if (arr == null || arr.length < 2) {
+			return;
+		}
+		sortProcess(arr, 0, arr.length - 1);
+	}
+			
+	public static void sortProcess(int[] arr, int L, int R) {
+		if (L == R) {
+			return;
+		}
+		int mid = (L + R) / 2; // L和R中点的位置
+		sortProcess(arr, L, mid);				// T(N/2)
+		sortProcess(arr, mid + 1, R);			// T(N/2)
+		merge(arr, L, mid, R);					// O(N)
+		// T(N) = 2*T(N/2) + O(N) => 
+	}
+		
+	public static void merge(int[] arr, int L, int mid, int R) {
+		// merge: sort the array(L to R)
+		int[] help = new int[R - L + 1];		// auxiliary array
+		int i = 0;
+		int p1 = L;
+		int p2 = mid + 1;
+		while (p1 <= mid && p2 <= R) {
+			// if the value of arr[p1] < arr[p2] give value arr[p1] to help[i]
+			// else give value arr[p2] to help[i]
+			help[i++] = arr[p1] < arr[p2] ? arr[p1++] : arr[p2++];
+		}
+		// p1\p2 must be and only one arrive the boundary
+		// give the remain elements of no-arrive boundary's one(p1 or p2) to help 
+		while (p1 <= mid) {
+			help[i++] = arr[p1++];
+		}
+		while (p2 <= R) {
+			help[i++] = arr[p2++];
+		}
+		for (i = 0; i < help.length; i++) {
+			// give elements of help to arr
+			arr[L + i] = help[i];
+		}
+	}
 
 
 ## 6、小和问题和逆序对问题
 ### 小和问题
+	问题描述: 
+	在一个数组中，每一个数左边比当前数小的数累加起来，叫做这个数组的小和。
+	求一个数组的小和。
+		例子：	
+		[1,3,4,2,5]	
+		1左边比1小的数，没有；	
+		3左边比3小的数，1；	
+		4左边比4小的数，1、3；	
+		2左边比2小的数，1；	
+		5左边比5小的数，1、3、4、2；	
+		所以小和为1+1+3+1+1+3+4+2=16
+			
+	解决思路:
+		使用归并排序中的merge将数组分割，然后合并的时候对比大小(如果小就计算)并使合并的整体有序
+				
+	代码:
+		public static int smallSum(int[] arr) {
+			if (arr == null || arr.length < 2) {
+				return 0;
+			}
+			return mergeSort(arr, 0, arr.length - 1);
+		}
+			
+		public static int mergeSort(int[] arr, int L, int R) {
+			if (L == R) {
+				return 0;
+			}
+			int mid = L + (R - L) / 2;			// 等同于int mid = (L + R) / 2;
+			return mergeSort(arr, L, mid) + mergeSort(arr, mid + 1, R)
+					+ merge(arr, L, mid, R);
+		}
+			
+		public static int merge(int[] arr, int L, int mid, int R) {
+			int[] help = new int[R - L + 1]; // auxiliary array
+			int i = 0;
+			int p1 = L;
+			int p2 = mid + 1;
+			int res = 0;
+			while (p1 <= mid && p2 <= R) {
+				res += arr[p1] < arr[p2] ? (R - p2 + 1) * arr[p1] : 0;
+				help[i++] = arr[p1] < arr[p2] ? arr[p1++] : arr[p2++];
+			}
+			while (p1 <= mid) {
+				help[i++] = arr[p1++];
+			}
+			while (p2 <= R) {
+				help[i++] = arr[p2++];
+			}
+			for (i = 0; i < help.length; i++) {
+				arr[L + i] = help[i];
+			}
+			return res;
+		}	
+
 
 
 ### 逆序对问题
-
+	同理解决
+			
+	代码:
+				
