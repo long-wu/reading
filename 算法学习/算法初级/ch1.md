@@ -707,4 +707,50 @@
 		每个桶设置: boolean值表示是否放入了数 max值表示桶中最大值 min值表示桶中最小值
 		最后遍历所有非空桶 把右边非空桶的min减去左边相邻非空桶(忽略空桶)的max得到值
 		然后得到的值其中的最大值就是相邻两数的最大差值
-
+				
+	代码:
+		public static int maxGap(int[] nums) {
+			if (nums == null || nums.length < 2) {
+				return 0;
+			}
+			int len = nums.length;
+			// find the min and max of array
+			int min = Integer.MAX_VALUE;
+			int max = Integer.MIN_VALUE;
+			for (int i = 0; i < len; i++) {
+				min = Math.min(min, nums[i]);
+				max = Math.max(max, nums[i]);
+			}
+			if (min == max) {
+				return 0;
+			}
+			
+			boolean[] hasNum = new boolean[len + 1];
+			int[] maxs = new int[len + 1];
+			int[] mins = new int[len + 1];
+			int bid = 0;
+			for (int i = 0; i < len; i++) {
+				// 找到数该放的桶  将数放入桶(桶数据更新)
+				bid = bucket(nums[i], len, min, max);
+				mins[bid] = hasNum[bid] ? Math.min(mins[bid], nums[i]) : nums[i];
+				maxs[bid] = hasNum[bid] ? Math.max(maxs[bid], nums[i]) : nums[i];
+				hasNum[bid] = true;
+			}
+			
+			int res = 0;
+			int lastMax = maxs[0];
+			// 找出相邻桶的最大差值  -> 右边min - 左边max的最大值
+			for (int i=1; i <= len; i++) {
+				if (hasNum[i]) {
+					res = Math.max(res, mins[i] - lastMax);
+					lastMax = maxs[i];
+				}
+			}
+			
+			return res;
+		}
+				
+		public static int bucket(long num, long len, long min, long max) {
+			// 确定一个数要去几号桶
+			return (int) ((num - min) * len / (max - min));
+		}
